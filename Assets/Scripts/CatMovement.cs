@@ -2,8 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 수평 방향을 나타내기 위한 열거 형식
+/// </summary>
+public enum HorizontalDirection : sbyte
+{
+    // 왼쪽 방향
+    Left,
+
+    // 오른쪽 방향
+    Right
+}
+
+
+
 public class CatMovement : MonoBehaviour
 {
+    /// <summary>
+    /// 고양이 객체를 나타냅니다.
+    /// </summary>
+    private CatInstance _CatInstance;
+
+    /// <summary>
+    /// 고양이의 방향을 나타냅니다.
+    /// </summary>
+    private HorizontalDirection _Direction = HorizontalDirection.Right;
+
     /// <summary>
     /// 맵의 반지름을 나타냅니다.
     /// </summary>
@@ -20,14 +44,19 @@ public class CatMovement : MonoBehaviour
     /// </summary>
     public float m_MoveSpeed;
 
+    /// <summary>
+    /// 목표 위치에 도달했을 경우 이동을 계속하도록 허용할 것인지에 대한 여부
+    /// </summary>
+    private bool _AllowKeepMoving;
+
     private void Start()
     {
-        _Destination = GetRandomPositionInGround();
+        _CatInstance = GetComponent<CatInstance>();
     }
 
     private void Update()
     {
-        Move();   
+        Move();
     }
 
     private void Move()
@@ -36,7 +65,7 @@ public class CatMovement : MonoBehaviour
         Vector2 currentPosition = transform.position;
 
         // 다음 위치를 얻습니다.
-        Vector2 nextPosition = Vector2.MoveTowards(currentPosition,_Destination,m_MoveSpeed * Time.deltaTime);
+        Vector2 nextPosition = Vector2.MoveTowards(currentPosition, _Destination, m_MoveSpeed * Time.deltaTime);
         // Vector2 MoveTowards(Vector2 current, Vector2 target, float maxDistanceDelta)
         // - 목표 위치로 maxDistanceDelta 만큼 이동시킨 결과를 반환합니다.
         // - current : 현재 위치를 전달합니다.
@@ -59,6 +88,17 @@ public class CatMovement : MonoBehaviour
 
         //currentPosition.x += 0.1f;
         //transform.position = currentPosition;
+
+        if (_AllowKeepMoving)
+        {
+            // 목표 지점에 거의 도달했다면
+            bool isFinished = Vector2.Distance(currentPosition, _Destination) < 0.001f;
+            if (isFinished)
+            {
+                // 새로운 목적지로 이동시킵니다.
+                StartMovement();
+            }
+        }
     }
 
     /// <summary>
@@ -80,5 +120,74 @@ public class CatMovement : MonoBehaviour
 
         // 각 축 값에 반지름을 곱하여 원 안의 위치를 반환합니다.
         return newDirection * m_Radius;
+    }
+
+    /// <summary>
+    /// 이동을 멈추도록 지시합니다.
+    /// </summary>
+    private void StopMovement()
+    {
+        // 계속된 이동 허용 X
+        _AllowKeepMoving = false;
+
+        // 현재 위치를 얻습니다.
+        Vector2 currentPosition = transform.position;
+        
+        // 현재 고양이의 위치를 목적지로 설정하여 이동을 멈춥니다.
+        _Destination = currentPosition;
+    }
+
+    /// <summary>
+    /// 이동을 시작하도록 지시합니다.
+    /// </summary>
+    private void StartMovement()
+    {
+        // 계속된 이동 허용
+        _AllowKeepMoving = true;
+
+        // 목적지를 설정합니다.
+        _Destination = GetRandomPositionInGround();
+
+        // 현재 위치를 얻습니다.
+        Vector2 currentPosition = transform.position;
+
+        // 목적지로 향하는 방향을 얻습니다.
+        Vector2 directionVector = (_Destination - currentPosition).normalized;
+
+        // 목적지에 대한 방향을 얻습니다.
+        HorizontalDirection direction = 
+            // 방향의 x 축 값이 양수라면 (오른쪽 방향이라면)
+            ((directionVector.x) > 0.0f) ?
+            // 방향을 오른쪽으로 설정
+            HorizontalDirection.Right: 
+            // 방향을 왼쪽으로 설정
+            HorizontalDirection.Left;
+
+        // 이전 방향과 다른 방향으로 이동하는 경우
+        if (direction != _Direction)
+        {
+            // 방향을 전환하며 고양이 객체에 알립니다.
+            _Direction = direction;
+        }
+    }
+
+    /// <summary>
+    /// 행동이 변경되었을 경우 CatInstance 에서 호출됩니다.
+    /// </summary>
+    /// <param name="behaviorType">설정된 행동이 전달됩니다.</param>
+    public void OnBehaviorChanged(BehaviorType behaviorType)
+    {
+        switch (behaviorType)
+        {
+            case BehaviorType.Idle:
+                // 이동 중단
+                StopMovement();
+                break;
+
+            case BehaviorType.Move:
+                // 이동 시작
+                StartMovement();
+                break;
+        }
     }
 }

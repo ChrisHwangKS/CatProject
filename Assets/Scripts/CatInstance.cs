@@ -13,4 +13,14 @@ public class CatInstance : MonoBehaviour
 
     // 이동을 담당하는 객체입니다.
     public CatMovement m_CatMovement;
+
+    /// <summary>
+    /// 행동이 변경되었을 경우 CatBehavior 객체에서 호출합니다.
+    /// </summary>
+    /// <param name="currentBehavior">설정된 행동이 전달됩니다.</param>
+    public void OnBehaviorChanged(BehaviorType currentBehavior)
+    {
+        // 행동이 변경되었음을 객체들에게 알립니다.
+        m_CatMovement.OnBehaviorChanged(currentBehavior);
+    }
 }
