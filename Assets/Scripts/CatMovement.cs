@@ -168,6 +168,8 @@ public class CatMovement : MonoBehaviour
         {
             // 방향을 전환하며 고양이 객체에 알립니다.
             _Direction = direction;
+
+            _CatInstance.OnDirectionChanged(_Direction);
         }
     }
 

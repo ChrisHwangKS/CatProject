@@ -14,6 +14,9 @@ public class CatInstance : MonoBehaviour
     // 이동을 담당하는 객체입니다.
     public CatMovement m_CatMovement;
 
+    // 고양이 애니메이션을 담당하는 객체입니다.
+    public CatAnimation m_CatAnimation;
+
     /// <summary>
     /// 행동이 변경되었을 경우 CatBehavior 객체에서 호출합니다.
     /// </summary>
@@ -22,5 +25,16 @@ public class CatInstance : MonoBehaviour
     {
         // 행동이 변경되었음을 객체들에게 알립니다.
         m_CatMovement.OnBehaviorChanged(currentBehavior);
+        m_CatAnimation.OnBehaviorChanged(currentBehavior);
+    }
+
+    /// <summary>
+    /// 방향이 변경되었을 경우 CatAnimation 객체에서 호출합니다.
+    /// </summary>
+    /// <param name="direction">설정된 방향이 전달됩니다.</param>
+    public void OnDirectionChanged(HorizontalDirection direction)
+    {
+        // 방향이 변경되었음을 객체들에게 알립니다.
+        m_CatAnimation.OnDirectionChanged(direction);
     }
 }

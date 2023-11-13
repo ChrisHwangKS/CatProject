@@ -100,7 +100,7 @@ public class CatBehavior : MonoBehaviour
 
             case BehaviorType.Move:
                 // 2초에서 5초까지 랜덤한 시간만큼 이동 후, 다음 행동을 설정합니다.
-                addSecond = 20;//UnityEngine.Random.Range(2, 6);
+                addSecond = UnityEngine.Random.Range(2, 6);
                 break;
         }
 
