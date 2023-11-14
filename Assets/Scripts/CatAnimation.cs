@@ -7,6 +7,29 @@ public class CatAnimation : MonoBehaviour
     public SpriteRenderer m_SpriteRenderer;
     public Animator m_Animator;
 
+    // 그리기 순서를 결정시킬 Transform Component
+    public Transform m_DrawPivotTransform;
+
+    // 그리기 순서를 결정시키기 위해 비교할 Transform Component
+    public Transform m_BowlDrawPivotTransform;
+
+    private void Update()
+    {
+        UpdateDrawOrder();
+    }
+
+    /// <summary>
+    /// 그리기 순서를 갱신합니다.
+    /// </summary>
+    private void UpdateDrawOrder()
+    {
+        float catYPosition = m_DrawPivotTransform.position.y;
+        float bowlYPosition = m_BowlDrawPivotTransform.position.y;
+
+        // 고양이의 위치가 그릇 위치보다 위에 배치된 경우 그릇이 먼저 그려질 수 있도록 합니다.
+        m_SpriteRenderer.sortingOrder = (catYPosition > bowlYPosition) ? -1 : 1;
+    }
+
     /// <summary>
     /// 고양이 방향이 전환되었을 때 호출되는 메서드
     /// </summary>

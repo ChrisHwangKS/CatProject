@@ -8,6 +8,9 @@ using UnityEngine;
 /// </summary>
 public class CatInstance : MonoBehaviour
 {
+    // 배고픔 수치 입니다.
+    public float m_Hungry;
+
     // 고양이 행동 결정을 담당하는 객체입니다.
     public CatBehavior m_CatBehavior;
 
@@ -16,6 +19,16 @@ public class CatInstance : MonoBehaviour
 
     // 고양이 애니메이션을 담당하는 객체입니다.
     public CatAnimation m_CatAnimation;
+
+    private void Update()
+    {
+        UpdateHungryValue();
+    }
+
+    private void UpdateHungryValue()
+    {
+        m_Hungry += Time.deltaTime * 0.01f;
+    }
 
     /// <summary>
     /// 행동이 변경되었을 경우 CatBehavior 객체에서 호출합니다.
