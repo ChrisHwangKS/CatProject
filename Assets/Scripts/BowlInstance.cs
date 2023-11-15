@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class BowlInstance : MonoBehaviour
 {
+    private const int TURNOFFSECOND = 5000;
+
     // 빈 그릇 스프라이트를 나타냅니다.
     public Sprite m_EmptyBowl;
 
@@ -25,8 +27,9 @@ public class BowlInstance : MonoBehaviour
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
 
+
         // 오브젝트를 비활성화 시킵니다.
-        gameObject.SetActive(false);
+        DestroyBowl();
     }
 
     private void Update()
@@ -107,7 +110,19 @@ public class BowlInstance : MonoBehaviour
             /// - 이 구문은 효율적으로 좋지 않습니다.
             /// - 추후, SpriteRenderer 형식의 변수를 만들고 컴포넌트를 찾는 작업을 
             ///   최소화 시켜주는 것이 좋습니다. 
+
+            // 빈 그릇 으로 바뀌고 5초후 이미지 삭제
+            Invoke("DestroyBowl", 5.0f);
         }
     }
+
+    /// <summary>
+    /// 밥 그릇 비활성화 메서드
+    /// </summary>
+    private void DestroyBowl()
+    {
+        gameObject.SetActive(false);
+    }
+
 
 }
