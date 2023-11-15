@@ -8,8 +8,20 @@ using UnityEngine;
 /// </summary>
 public class CatInstance : MonoBehaviour
 {
-    // 배고픔 수치 입니다.
+    /// <summary>
+    /// 배고파지는 수치
+    /// </summary>
+    public const float HUNGRY_MIN = 30.0f;
+
+    /// <summary>
+    /// 배고픔 수치 입니다.
+    /// </summary>
     public float m_Hungry;
+
+    /// <summary>
+    /// 배고픔을 나타냅니다.
+    /// </summary>
+    public bool m_IsHungry;
 
     // 고양이 행동 결정을 담당하는 객체입니다.
     public CatBehavior m_CatBehavior;
@@ -20,15 +32,52 @@ public class CatInstance : MonoBehaviour
     // 고양이 애니메이션을 담당하는 객체입니다.
     public CatAnimation m_CatAnimation;
 
+    // 그릇 객체를 나타냅니다.
+    public BowlInstance m_BowlInstance;
+
     private void Update()
     {
         UpdateHungryValue();
     }
 
+    /// <summary>
+    /// 배고픔 수치를 갱신합니다.
+    /// </summary>
     private void UpdateHungryValue()
     {
         m_Hungry += Time.deltaTime * 0.01f;
+
+        // 배고파지는 경우
+        m_IsHungry = m_Hungry >= HUNGRY_MIN;
+        if (m_IsHungry)
+        {
+            OnHungry();
+        }
     }
+
+    /// <summary>
+    /// 배고파지는 경우 호출되는 메서드 입니다.
+    /// </summary>
+    private void OnHungry()
+    {
+        // 그릇이 활성화 상태인 경우
+        if(m_BowlInstance.IsEnable())
+        {
+            // 그릇 오브젝트 위치
+            Vector2 bowlPosition = m_BowlInstance.transform.position;
+
+            // 고양이 오브젝트 위치
+            Vector2 catPosition = transform.position;
+
+            // 그릇과 고양이가 가깝다면
+            if(Vector2.Distance(bowlPosition, catPosition) < 0.05f)
+            {
+                // 먹도록 합니다.
+                m_Hungry -= m_BowlInstance.Eat();
+            }
+        }
+    }
+
 
     /// <summary>
     /// 행동이 변경되었을 경우 CatBehavior 객체에서 호출합니다.
@@ -49,5 +98,14 @@ public class CatInstance : MonoBehaviour
     {
         // 방향이 변경되었음을 객체들에게 알립니다.
         m_CatAnimation.OnDirectionChanged(direction);
+    }
+
+    /// <summary>
+    /// 그릇 객체를 반환합니다.
+    /// </summary>
+    /// <returns>그릇 객체가 반환됩니다.</returns>
+    public BowlInstance GetBowlInstance()
+    {
+        return m_BowlInstance;
     }
 }

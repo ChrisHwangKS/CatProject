@@ -145,8 +145,17 @@ public class CatMovement : MonoBehaviour
         // 계속된 이동 허용
         _AllowKeepMoving = true;
 
+        // 밥먹기 위한 조건식을 작성하기 위한 변수들
+        bool isHungry = _CatInstance.m_IsHungry;
+        bool bowlIsEnable = _CatInstance.GetBowlInstance().IsEnable();
+
+        // 그릇 위치
+        Vector2 bowlPosition = _CatInstance.GetBowlInstance().transform.position;
+
         // 목적지를 설정합니다.
-        _Destination = GetRandomPositionInGround();
+        _Destination = (isHungry && bowlIsEnable)?  // 배가 고프며, 그릇이 활성화된 경우
+            bowlPosition :                          // 목적지를 그릇 위치로 설정
+            GetRandomPositionInGround();            // 아니라면 랜덤한 위치를 설정
 
         // 현재 위치를 얻습니다.
         Vector2 currentPosition = transform.position;

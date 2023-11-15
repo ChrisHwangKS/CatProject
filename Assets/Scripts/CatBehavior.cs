@@ -69,15 +69,23 @@ public class CatBehavior : MonoBehaviour
     /// </summary>
     private void PickNewBehavior()
     {
-        // 랜덤한 행동 값을 얻습니다.
-        int randomBehaviorValue = UnityEngine.Random.Range(
-            // 행동의 첫 번째 요소
-            (int)BehaviorType.BehaviorFirstValue,
-           // 행동의 마지막 요소 + 1
-           (int)BehaviorType.BehaviorLastValue + 1);
+        // 배가 고프다면 무조건 Move 행동으로 설정합니다.
+        if (_CatInstance.m_IsHungry)
+        {
+            _BehaviorType = BehaviorType.Move;
+        }
+        else
+        {  
+            // 랜덤한 행동 값을 얻습니다.
+            int randomBehaviorValue = UnityEngine.Random.Range(
+                // 행동의 첫 번째 요소
+                (int)BehaviorType.BehaviorFirstValue,
+               // 행동의 마지막 요소 + 1
+               (int)BehaviorType.BehaviorLastValue + 1);
 
-        // 뽑은 행동 타입을 설정합니다.
-        _BehaviorType = (BehaviorType)randomBehaviorValue;
+            // 뽑은 행동 타입을 설정합니다.
+            _BehaviorType = (BehaviorType)randomBehaviorValue;
+        }
 
         // 고양이 객체에 행동이 설정되었음을 알립니다.
         _CatInstance.OnBehaviorChanged(_BehaviorType);
